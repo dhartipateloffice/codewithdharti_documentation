@@ -1,0 +1,180 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>{% block title %}codewithdharti{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https:///bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar-container">
+    <div class="container">
+            <a class="nav-link" href="{% url 'notes' %}">Notes</a>
+            <a class="nav-link" href="{% url 'blog' %}">Blog</a>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-container">
+    {% block content %}
+    <p>Welcome to codewithdharti</p>
+    {% endblock %}
+</div>
+
+<!-- Expressions  -->
+{{ variable }}
+{{ user.name }}
+{{ 4 + 4 }}
+{{ "dharti"|upper }}
+
+<!-- Statements   -->
+----- imagine this as data-----
+
+{
+  "name": "Dharti Patel",
+  "languages": [
+    {
+      "id": "lang1",
+      "name": "Python",
+      "price": 9999.99,
+      "in_document_available": true
+    },
+    {
+      "id": "lang2",
+      "name": "Django",
+      "price": 8999.99,
+      "in_document_available": false
+    },
+    {
+      "id": "lang3",
+      "name": "Fastapi",
+      "price": 4000.00,
+      "in_document_available": false
+    },
+    {
+      "id": "lang3",
+      "name": "Flask",
+      "price": 4555.00,
+      "in_document_available": true
+    }
+  ]
+}
+
+
+{% for lang in languages %}
+        <div class="language-card">
+            <h3>{{ lang.name }} (ID: {{ lang.id }})</h3>
+            <p>Price: ₹{{ "%.2f"|format(lang.price) }}</p>
+            {% if lang.in_document_available %}
+                <p class="available">Documentation: Available</p>
+            {% else %}
+                <p class="not-available">Documentation: Not Available</p>
+            {% endif %}
+        </div>
+{% else %}
+    <div class="no-languages-message">
+        <p>No language information is available at this time.</p>
+        <p>Please check back later!</p>
+    </div>
+{% endfor %}
+
+<!-- If/Elif/Else Conditional -->
+{% set temperature = 25 %} 
+{% if temperature > 30 %}
+    <p>It's hot!</p>
+{% elif temperature > 20 %}
+    <p>It's warm.</p>
+{% else %}
+    <p>It's cold.</p>
+{% endif %}
+
+<!-- set statement -->
+{% set my_message = "Hello from Jinja's set statement!" %}
+<p>{{ my_message }}</p>
+
+
+<!-- Comments   -->
+{# comment bro #}
+
+<!-- Filters   -->
+{{ dharti|upper }}
+{{ items|length }}
+{{ list|join(", ") }}
+{% set raw_html = "<strong>This is bold!</strong>" %}
+<p>Safe HTML: {{ raw_html | safe }}</p>
+
+<!-- Tests  -->
+{% set owner = "Dharti" %}
+{% if owner is defined %}
+    <p>owner is "Dharti"</p>
+{% endif %}
+
+{% set some_value = "not none" %}
+{% if some_value is not none %}
+    <p>Value is not none.</p>
+{% endif %}
+
+{% set birthdate = 4 %}
+{% if birthdate is even %}
+    <p>{{ birthdate }} is an even number.</p>
+{% endif %}
+
+
+<!-- Macros (like functions)  -->  #jinja doesn't support macrons
+{% macro input(name, value='', type='text') %}
+  <input type="{{ type }}" name="{{ name }}" value="{{ value }}">
+{% endmacro %}
+
+
+<!-- Inheritance  -->
+{% extends "base.html" %}
+{% block content %}
+  content here.
+{% endblock %}
+
+
+<!--  Imports and Includes  -->
+{% include "base.html" %}
+{% import "helpers.html" as helpers %}
+
+
+<!-- Loop Control Variables  -->
+{% set languages = ['flutter', 'nodejs', 'ml'] %}
+<h3>languages List:</h3>
+<ul>
+{% for language in languages %}
+    <li>{{ loop.index }}. {{ language }} {% if loop.first %}(First item){% elif loop.last %}(Last item){% endif %}</li>
+{% endfor %}
+</ul>
+
+<!-- With Statement  -->
+{% set languages = {'id': '44', 'language': {'name': 'nodejs', 'email': 'dhats@example.com'}} %}
+{% with languages.language as lang %}
+    <p>language ID: {{ lang.id }}</p>
+    <p>language Name: {{ lang.name }}</p>
+    <p>language Email: {{ lang.email }}</p>
+{% endwith %}
+
+<!-- Whitespace Control  -->
+{%- set greeting = "Hello" -%}
+{%- if true -%}
+    {{- greeting -}}
+{%- endif -%}
+<p>=whitespace control</p>
+
+<!-- Footer -->
+<footer class="footer-container">
+    &copy; 2024 codewithdharti. All rights reserved.
+</footer>
+
+<script src="https://bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
