@@ -1,0 +1,176 @@
+
+sudo systemctl restart sandbox_pubi_ai_gunicorn.service
+
+
+[Unit]
+Description=gunicorn socket for pubi_ai project
+
+[Socket]
+ListenStream=/run/pubi_ai_gunicorn.sock
+
+[Install]
+WantedBy=sockets.target
+
+-----------------------
+[Unit]
+Description=gunicorn daemon for pubi_ai project
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html/pubi_ai
+
+ExecStart=/var/www/html/pubi_ai/.env/bin/gunicorn \
+    --workers 3 \
+    --bind unix:/run/pubi_ai_gunicorn.sock \
+    pubi_ai.wsgi:application
+
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
+
+------
+server {
+    listen 8080;
+    server_name 134.209.35.177;
+
+    location / {
+        proxy_pass http://unix:/run/pubi_ai_gunicorn.sock;  # Make sure Gunicorn uses this socket
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Static files
+    location /static/ {
+        alias /var/www/html/pubi_ai/static/;
+    }
+
+    # Media files
+    location /media/ {
+        alias /var/www/html/pubi_ai/media/;
+    }
+
+    # Optional: If you want to serve the /chat route directly
+    location /chat/ {
+        proxy_pass http://unix:/run/pubi_ai_gunicorn.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Optionally add logging to debug potential issues
+    error_log /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+}
+
+sudo vim /etc/systemd/system/pubi_ai_gunicorn.socket 
+sudo vim /etc/systemd/system/pubi_ai_gunicorn.service
+
+sudo systemctl start pubi_ai_gunicorn.socket
+sudo systemctl enable pubi_ai_gunicorn.socket
+
+sudo vim /etc/nginx/sites-available/pubi_ai_gunicorn
+sudo ln -s /etc/nginx/sites-available/pubi_ai_gunicorn /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+sudo service nginx restart
+sudo service gunicorn restart
+sudo systemctl daemon-reload
+sudo ufw allow 'Nginx Full'
+sudo systemctl restart gunicorn
+sudo systemctl enable gunicorn
+
+sudo systemctl status gunicorn
+sudo systemctl status nginx
+
+-------------------------------------------------
+
+sudo vim /etc/systemd/system/sandbox_pubi_ai_gunicorn.socket 
+sudo vim /etc/systemd/system/sandbox_pubi_ai_gunicorn.service
+
+sudo systemctl start sandbox_pubi_ai_gunicorn.socket
+sudo systemctl enable sandbox_pubi_ai_gunicorn.socket
+
+sudo vim /etc/nginx/sites-available/sandbox_pubi_ai_gunicorn
+sudo ln -s /etc/nginx/sites-available/sandbox_pubi_ai_gunicorn /etc/nginx/sites-enabled/
+
+sudo chown www-data:www-data /run/pubi_ai_gunicorn.sock
+sudo chmod 660 /run/pubi_ai_gunicorn.sock
+
+
+
+
+sudo vim /etc/systemd/system/laundry_gunicorn.socket 
+sudo vim /etc/systemd/system/laundry_gunicorn.service
+
+sudo vim /etc/nginx/sites-available/laundry
+sudo ln -s /etc/nginx/sites-available/laundry /etc/nginx/sites-enabled/
+
+
+[Unit]
+Description=laundry gunicorn socket
+
+[Socket]
+ListenStream=/run/laundry_gunicorn.sock
+
+[Install]
+WantedBy=sockets.target
+
+sudo systemctl start laundry_gunicorn.socket
+
+
+
+[Unit]
+Description=gunicorn daemon for laundry project
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html/laundry
+
+ExecStart=/var/www/html/laundry/.venv/bin/gunicorn \
+    --workers 3 \
+    --bind unix:/run/laundry_gunicorn.sock \
+    laundry.wsgi:application
+
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+server {
+    listen 3500;
+    server_name 134.209.35.177;
+
+    location / {
+        proxy_pass http://unix:/run/laundry_gunicorn.sock;  # Make sure Gunicorn uses this socket
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Static files
+    location /static/ {
+        alias /var/www/html/laundry/static/;
+    }
+
+    # Media files
+    location /media/ {
+        alias /var/www/html/laundry/media/;
+    }
+
+    # Optionally add logging to debug potential issues
+    error_log /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+}
+

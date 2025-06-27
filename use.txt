@@ -1,0 +1,30 @@
+MediaPipe in Python is a powerful framework that allows you to develop real-time media processing applications. It provides ready-to-use pipelines for common tasks, saving you development time.
+use - 
+1.face track
+2.fitness app for real time pose estimation 
+3.Hand gesture
+4.Bitmoji
+5.snapchat filters
+6.Fitness and health applications
+Fitness and health applications: Track body movements for exercise analysis, physical therapy exercises, or yoga pose detection.
+Sign language translation: Recognize hand gestures and translate them into spoken language or text in real-time.
+Interactive games and experiences: Develop games that use hand gestures, facial expressions, or body pose as controls
+
+Want to start building body pose based apps?
+Maybe want to control your screen using nothing but gestures!
+Well, Mediapipe and Python are the answer! 
+we can do it with Body pose detection, facial landmark estimation and hand pose detection using a single Mediapipe library and your webcam.
+
+Behind the scenes, Mediapipe Holistic, the model shown in this video, uses deep learning models to be able to accurately detect keypoints. 
+
+mediapipe - library/framework 
+
+pip install mediapipe opencv-python
+import mediapipe as mp
+import cv2
+
+use attributes of mediapipe and perform it
+1. Install Mediapipe and setup Mediapipe Holistic for Python
+2. Access a real time video feed from your webcam using OpenCV
+3. Detect and visualise facial landmarks, body poses and hand poses 
+
